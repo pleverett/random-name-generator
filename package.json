@@ -1,5 +1,6 @@
 {
   "name": "vite-react-typescript-starter",
+  "homepage": "https://pleverett.github.io/random-name-generator/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
