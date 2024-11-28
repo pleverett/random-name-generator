@@ -44,20 +44,17 @@ class DatabaseManager {
         this.checkAndPopulateData().then(resolve).catch(reject);
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
         const db = (event.target as IDBOpenDBRequest).result;
 
-        // Create names store
-        if (!db.objectStoreNames.contains('names')) {
-          const namesStore = db.createObjectStore('names', { keyPath: 'id', autoIncrement: true });
-          namesStore.createIndex('gender_type', ['gender', 'type'], { unique: false });
-        }
+        // Create names store with indexes
+        const namesStore = db.createObjectStore('names', { keyPath: 'id' });
+        namesStore.createIndex('gender', 'gender', { unique: false });
+        namesStore.createIndex('type', 'type', { unique: false });
 
-        // Create titles store
-        if (!db.objectStoreNames.contains('titles')) {
-          const titlesStore = db.createObjectStore('titles', { keyPath: 'id', autoIncrement: true });
-          titlesStore.createIndex('gender', 'gender', { unique: false });
-        }
+        // Create titles store with indexes
+        const titlesStore = db.createObjectStore('titles', { keyPath: 'id' });
+        titlesStore.createIndex('gender', 'gender', { unique: false });
       };
     });
   }
@@ -204,6 +201,22 @@ class DatabaseManager {
           : titles;
         resolve(filteredTitles);
       };
+    });
+  }
+
+  public async getNamesByGender(gender: 'male' | 'female'): Promise<Name[]> {
+    if (!this.db) {
+      throw new Error('Database not initialized');
+    }
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction(['names'], 'readonly');
+      const store = transaction.objectStore('names');
+      const index = store.index('gender');
+      const request = index.getAll(gender);
+
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
     });
   }
 }
