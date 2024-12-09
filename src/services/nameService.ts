@@ -1,4 +1,4 @@
-import { db } from '../lib/database';
+import { db } from '../lib/db';
 
 export type Gender = 'male' | 'female';
 export type NameType = 'first' | 'last';
