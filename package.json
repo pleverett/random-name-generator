@@ -2,6 +2,7 @@
   "name": "vite-react-typescript-starter",
   "homepage": "https://pleverett.github.io/random-name-generator/",
   "private": true,
+  "main": "main.js",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -11,7 +12,10 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "migrate": "node --loader ts-node/esm src/scripts/migrate.ts"
+    "migrate": "node --loader ts-node/esm src/scripts/migrate.ts",
+    "electron-dev": "electron .",
+    "dist": "pnpm build && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
@@ -22,17 +26,22 @@
     "react-icons": "^5.4.0"
   },
   "devDependencies": {
+    "7zip-bin": "^5.2.0",
+    "7zip-bin-win": "^2.2.0",
     "@eslint/js": "^9.18.0",
     "@tailwindcss/postcss": "4.0.0",
+    "@tailwindcss/vite": "^4.1.10",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^36.4.0",
+    "electron-builder": "^26.0.12",
     "eslint": "^9.18.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.18",
     "gh-pages": "^6.3.0",
     "globals": "^15.14.0",
-    "postcss": "^8.5.1",
+    "postcss": "^8.5.6",
     "tailwindcss": "4.0.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
@@ -43,6 +52,27 @@
   "pnpm": {
     "pnpm.onlyBuiltDependencies": [
       "esbuild"
+    ],
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild"
     ]
+  },
+  "build": {
+    "appId": "com.yourcompany.randomnamegenerator",
+    "productName": "Random Name Generator",
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "package.json",
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico"
+    }
   }
 }
